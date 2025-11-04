@@ -1,0 +1,25 @@
+- op: add
+  path: /spec/template/spec/containers/0/resources
+  value:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+- op: add
+  path: /spec/template/spec/containers/0/livenessProbe
+  value:
+    httpGet:
+      path: /healthz
+      port: 80
+    initialDelaySeconds: 30
+    periodSeconds: 10
+- op: add
+  path: /spec/template/spec/containers/0/readinessProbe
+  value:
+    httpGet:
+      path: /ready
+      port: 80
+    initialDelaySeconds: 5
+    periodSeconds: 5

@@ -1,0 +1,45 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Reference the base configuration
+resources:
+- ../../base
+
+# Add environment-specific suffix
+nameSuffix: -prod
+
+# Add common labels for production environment
+labels:
+- pairs:
+    environment: prod
+    team: platform
+    tier: production
+
+# Apply patches for production
+patches:
+- path: deployment-patch.yaml
+- path: resource-limits-patch.yaml
+  target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: guestbook-ui
+- path: service-patch.yaml
+  target:
+    group: ""
+    version: v1
+    kind: Service
+    name: guestbook-ui
+
+# Add config map for production settings
+configMapGenerator:
+- name: guestbook-config
+  literals:
+  - APP_ENV=production
+  - LOG_LEVEL=info
+  - CACHE_TTL=3600
+
+# Production-specific images
+images:
+- name: gcr.io/google-samples/gb-frontend
+  newTag: v6
